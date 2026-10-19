@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>午餐扭蛋機</title>
+    <style>
+        /* 基礎重置與背景設定 */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffd1dc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            padding-bottom: 50px;
+        }
+
+        h1 {
+            color: #ff6b81;
+            margin-top: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 遊戲區域，包含扭蛋機和小熊 */
+        .game-area {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+
+        /* 簡單的 CSS 扭蛋機 */
+        .gacha-machine {
+            width: 200px;
+            height: 300px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 搖晃動畫 */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .gacha-machine.shaking {
+            animation: shake 0.2s linear infinite;
+        }
+
+        .machine-top {
+            width: 160px;
+            height: 160px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            border: 5px solid #ff4757;
+            position: absolute;
+            top: 0;
+            left: 15px;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* 裡面的小裝飾扭蛋 */
+        .mini-capsule {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .c1 { background: #1e90ff; bottom: 10px; left: 20px; }
+        .c2 { background: #2ed573; bottom: 15px; left: 60px; }
+        .c3 { background: #ffa502; bottom: 5px; right: 20px; }
+        .c4 { background: #ff4757; bottom: 40px; left: 40px; }
+        .c5 { background: #9b59b6; bottom: 35px; right: 40px; }
+
+        .machine-base {
+            width: 200px;
+            height: 140px;
+            background: #ff4757;
+            border-radius: 20px 20px 10px 10px;
+            position: absolute;
+            bottom: 0;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+        }
+
+        /* 旋鈕 */
+        .knob {
+            width: 40px;
+            height: 40px;
+            background: #dfe4ea;
+            border-radius: 50%;
+            position: absolute;
+            top: 40px;
+            left: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #ced6e0;
+        }
+        .knob::after {
+            content: '';
+            width: 10px;
+            height: 25px;
+            background: #a4b0be;
+            border-radius: 5px;
+        }
+
+        /* 出口 */
+        .exit {
+            width: 60px;
+            height: 40px;
+            background: #2f3542;
+            border-radius: 10px;
+            position: absolute;
+            bottom: 15px;
+            left: 70px;
+        }
+
+        /* 可愛胖胖小熊 */
+        .bear {
+            width: 120px;
+            height: 150px;
+            position: relative;
+            margin-left: -20px; 
+            z-index: 5;
+            transition: all 0.3s ease;
+        }
+
+        .bear-head {
+            width: 90px;
+            height: 80px;
+            background: #8b5a2b;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            left: 15px;
+            z-index: 2; 
+        }
+
+        .bear-body {
+            width: 100px;
+            height: 110px;
+            background: #8b5a2b;
+            border-radius: 50px 50px 40px 40px;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            z-index: 1; 
+        }
+
+        .bear-ear {
+            width: 30px;
+            height: 30px;
+            background: #8b5a2b;
+            border-radius: 50%;
+            position: absolute;
+            top: 15px;
+            z-index: 1;
+        }
+        .ear-left { left: 10px; }
+        .ear-right { right: 10px; }
+        
+        .bear-ear::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: #d2b48c;
+            border-radius: 50%;
+            position: absolute;
+            top: 7px;
+            left: 7px;
+        }
+
+        .bear-snout {
+            width: 40px;
+            height: 30px;
+            background: #d2b48c;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            left: 25px;
+            display: flex;
+            justify-content: center;
+        }
+        .bear-nose {
+            width: 12px;
+            height: 8px;
+            background: black;
+            border-radius: 50%;
+            margin-top: 5px;
+        }
+
+        .bear-eye {
+            width: 8px;
+            height: 12px;
+            background: black;
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            transition: all 0.2s;
+        }
+        .eye-left { left: 25px; }
+        .eye-right { right: 25px; }
+
+        /* 小熊表情狀態 */
+        .bear.confused .bear-eye {
+            height: 4px;
+            width: 12px;
+            border-radius: 2px;
+        }
+        .bear.confused .eye-left { transform: rotate(15deg); }
+        .bear.confused .eye-right { transform: rotate(-15deg); }
+
+        .bear.happy .bear-eye {
+            height: 4px;
+            width: 12px;
+            border-radius: 50% 50% 0 0;
+            border-top: 3px solid black;
+            background: transparent;
+            margin-top: 4px;
+        }
+
+        /* 掉落的扭蛋 */
+        .falling-capsule {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1e90ff 50%, #f1f2f6 50%);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 60px;
+            left: 80px;
+            z-index: 11;
+            opacity: 0;
+            border: 2px solid #2f3542;
+        }
+
+        @keyframes drop {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(80px); opacity: 1; }
+        }
+
+        .falling-capsule.drop {
+            animation: drop 0.5s forwards ease-in;
+        }
+
+        /* 操作按鈕 */
+        .play-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #ff4757;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.2s;
+            z-index: 20;
+        }
+
+        .play-btn:hover { background-color: #ff6b81; transform: translateY(-2px); }
+        .play-btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4); }
+        .play-btn:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* 清單管理區塊 */
+        .options-panel {
+            background: rgba(255, 255, 255, 0.85);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .options-panel h3 { margin-top: 0; color: #ff4757; font-size: 18px; margin-bottom: 15px; }
+
+        .options-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .option-tag {
+            background: #ffeaa7;
+            color: #2d3436;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .add-area {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .add-area input {
+            padding: 10px;
+            border: 2px solid #dfe4ea;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .add-area input:focus { border-color: #ff6b81; }
+
+        .input-name { width: 120px; }
+        .input-emoji { width: 60px; text-align: center; }
+
+        .add-btn {
+            padding: 10px 20px;
+            background: #2ed573;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover { background: #27ae60; }
+
+        /* 結果顯示區 (全螢幕覆蓋，正中間) */
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .result-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .result-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            transform: scale(0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .result-overlay.show .result-card { transform: scale(1); }
+
+        .result-emoji { font-size: 60px; margin: 0; }
+        .result-text { font-size: 32px; color: #2f3542; margin: 20px 0; font-weight: bold; }
+
+        .retry-btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            color: #ff4757;
+            background: white;
+            border: 2px solid #ff4757;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .retry-btn:hover { background: #ff4757; color: white; }
+
+    </style>
+</head>
+<body>
+
+    <h1>今天吃什麼？🍱</h1>
+
+    <div class="game-area">
+        <!-- 扭蛋機 -->
+        <div class="gacha-machine" id="machine">
+            <div class="machine-top">
+                <div class="mini-capsule c1"></div>
+                <div class="mini-capsule c2"></div>
+                <div class="mini-capsule c3"></div>
+                <div class="mini-capsule c4"></div>
+                <div class="mini-capsule c5"></div>
+            </div>
+            <div class="machine-base">
+                <div class="knob" id="knob"></div>
+                <div class="exit"></div>
+            </div>
+            <div class="falling-capsule" id="falling-capsule"></div>
+        </div>
+
+        <!-- 小熊 -->
+        <div class="bear" id="bear">
+            <div class="bear-ear ear-left"></div>
+            <div class="bear-ear ear-right"></div>
+            <div class="bear-head">
+                <div class="bear-eye eye-left"></div>
+                <div class="bear-eye eye-right"></div>
+                <div class="bear-snout">
+                    <div class="bear-nose"></div>
+                </div>
+            </div>
+            <div class="bear-body"></div>
+        </div>
+    </div>
+
+    <button class="play-btn" id="playBtn">轉動扭蛋！</button>
+
+    <!-- 清單管理區塊 -->
+    <div class="options-panel">
+        <h3>📋 目前的午餐清單</h3>
+        <div class="options-list" id="optionsList">
+            <!-- 動態生成標籤 -->
+        </div>
+        <div class="add-area">
+            <input type="text" id="newName" class="input-name" placeholder="想吃什麼?">
+            <input type="text" id="newEmoji" class="input-emoji" placeholder="Emoji🍣">
+            <button class="add-btn" id="addBtn">加進機器</button>
+        </div>
+    </div>
+
+    <!-- 結果覆蓋層 -->
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🍽️</div>
+            <div class="result-text" id="resultText">正在為您準備...</div>
+            <button class="retry-btn" id="retryBtn">再轉一次</button>
+        </div>
+    </div>
+
+    <script>
+        let lunchOptions = [
+            { text: '拉麵', emoji: '🍜' },
+            { text: '健康便當', emoji: '🍱' },
+            { text: '麥當勞', emoji: '🍔' },
+            { text: '八方雲集', emoji: '🥟' },
+            { text: '711沙拉', emoji: '🥗' },
+            { text: '員工餐廳', emoji: '🍛' },
+            { text: '隨便超商解決', emoji: '🏪' },
+            { text: '義大利麵', emoji: '🍝' }
+        ];
+
+        const playBtn = document.getElementById('playBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const machine = document.getElementById('machine');
+        const knob = document.getElementById('knob');
+        const fallingCapsule = document.getElementById('falling-capsule');
+        const bear = document.getElementById('bear');
+        const resultOverlay = document.getElementById('resultOverlay');
+        const resultEmoji = document.getElementById('resultEmoji');
+        const resultText = document.getElementById('resultText');
+        const optionsList = document.getElementById('optionsList');
+        const newNameInput = document.getElementById('newName');
+        const newEmojiInput = document.getElementById('newEmoji');
+        const addBtn = document.getElementById('addBtn');
+
+        function renderOptions() {
+            optionsList.innerHTML = '';
+            lunchOptions.forEach(option => {
+                const tag = document.createElement('div');
+                tag.className = 'option-tag';
+                tag.textContent = `${option.emoji} ${option.text}`;
+                optionsList.appendChild(tag);
+            });
+        }
+
+        addBtn.addEventListener('click', () => {
+            const text = newNameInput.value.trim();
+            let emoji = newEmojiInput.value.trim();
+            
+            if (emoji === '') emoji = '🍽️';
+
+            if (text !== '') {
+                lunchOptions.push({ text: text, emoji: emoji });
+                newNameInput.value = '';
+                newEmojiInput.value = '';
+                renderOptions(); 
+                
+                addBtn.textContent = '新增成功！';
+                addBtn.style.background = '#ff4757';
+                setTimeout(() => {
+                    addBtn.textContent = '加進機器';
+                    addBtn.style.background = '#2ed573';
+                }, 1000);
+            } else {
+                alert('請至少輸入想吃的午餐名稱喔！');
+            }
+        });
+
+        function playGacha() {
+            playBtn.disabled = true;
+            bear.className = 'bear confused';
+            
+            machine.classList.add('shaking');
+            knob.style.transform = 'rotate(360deg)';
+            knob.style.transition = 'transform 1s linear';
+
+            setTimeout(() => {
+                machine.classList.remove('shaking');
+                knob.style.transform = 'rotate(0deg)';
+                knob.style.transition = 'none'; 
+                
+                fallingCapsule.classList.add('drop');
+
+                setTimeout(() => {
+                    const randomIndex = Math.floor(Math.random() * lunchOptions.length);
+                    const selectedLunch = lunchOptions[randomIndex];
+                    
+                    resultEmoji.textContent = selectedLunch.emoji;
+                    resultText.textContent = selectedLunch.text;
+                    
+                    resultOverlay.classList.add('show');
+                    bear.className = 'bear happy';
+                    
+                }, 600); 
+
+            }, 1000); 
+        }
+
+        function resetGame() {
+            resultOverlay.classList.remove('show');
+            fallingCapsule.classList.remove('drop');
+            playBtn.disabled = false;
+            bear.className = 'bear'; 
+        }
+
+        playBtn.addEventListener('click', playGacha);
+        retryBtn.addEventListener('click', resetGame);
+        renderOptions();
+    </script>
+</body>
+</html>
