@@ -1,5 +1,6 @@
 # vibe-tools
 選擇障礙午餐扭蛋機
+
 1. 專案概述
 
   專案名稱：午餐扭蛋機 (Lunch Gacha Machine)
@@ -8,12 +9,14 @@
   
   目標裝置：響應式網頁設計（RWD），支援手機與桌上型電腦瀏覽。
 
+
 2. 技術規格 (Technical Stack)
   核心語言：純 HTML5, CSS3, Vanilla JavaScript（不依賴任何外部框架如 React/Vue）。
 
   架構：三者整合於單一 index.html 檔案中，便於輕量化執行與分享。
   
   部署方式：GitHub Pages 靜態網頁託管。
+
 
 3.視覺與版面設計 (UI Design)
   
@@ -33,6 +36,7 @@
     
     結果顯示區：隱藏式的全螢幕半透明黑底覆蓋層（Overlay），中央為白色卡片，顯示抽中的 Emoji 與文字，並帶有「再轉一次」按鈕。
 
+
 4. 核心功能需求 (Functional Requirements)
 
   F1. 隨機抽取系統：點擊主按鈕後，程式需從目前的午餐陣列中，透過 Math.random() 隨機選出一個項目。
@@ -50,6 +54,7 @@
     防呆機制：名稱若為空值則跳出警告（Alert），拒絕新增。
   
   F4. 狀態重置：抽獎結束後，可透過點擊「再轉一次」按鈕關閉結果視窗，並將所有動畫與按鈕狀態恢復至初始設定。
+
 
 5. 互動與動畫流程 (UX & Animation Flow)
 
