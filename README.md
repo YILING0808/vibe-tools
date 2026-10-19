@@ -7,15 +7,14 @@
   專案目標：打造一個兼具趣味性與實用性的單頁應用程式（SPA），幫助有「選擇障礙」的人們，透過互動式的扭蛋動畫，快速地決定當天的午餐。
   
   目標裝置：響應式網頁設計（RWD），支援手機與桌上型電腦瀏覽。
-
-3. 技術規格 (Technical Stack)
+2. 技術規格 (Technical Stack)
   核心語言：純 HTML5, CSS3, Vanilla JavaScript（不依賴任何外部框架如 React/Vue）。
 
   架構：三者整合於單一 index.html 檔案中，便於輕量化執行與分享。
   
   部署方式：GitHub Pages 靜態網頁託管。
 
-4.視覺與版面設計 (UI Design)
+3.視覺與版面設計 (UI Design)
   
   整體風格：活潑、可愛、明亮。
   
@@ -33,7 +32,7 @@
     
     結果顯示區：隱藏式的全螢幕半透明黑底覆蓋層（Overlay），中央為白色卡片，顯示抽中的 Emoji 與文字，並帶有「再轉一次」按鈕。
 
-6. 核心功能需求 (Functional Requirements)
+4. 核心功能需求 (Functional Requirements)
 
   F1. 隨機抽取系統：點擊主按鈕後，程式需從目前的午餐陣列中，透過 Math.random() 隨機選出一個項目。
   
@@ -51,7 +50,7 @@
   
   F4. 狀態重置：抽獎結束後，可透過點擊「再轉一次」按鈕關閉結果視窗，並將所有動畫與按鈕狀態恢復至初始設定。
 
-8. 互動與動畫流程 (UX & Animation Flow)
+5. 互動與動畫流程 (UX & Animation Flow)
 
   觸發階段：點擊「轉動扭蛋！」按鈕。
   
